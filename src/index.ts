@@ -79,6 +79,19 @@ export class MajoContext {
   }
 
   /**
+   * Filter files
+   * @param fn Filter handler
+   */
+  filter(fn: FilterHandler) {
+    for (const relativePath in this.files) {
+      if (!fn(relativePath, this.files[relativePath])) {
+        delete this.files[relativePath]
+      }
+    }
+    return this
+  }
+
+  /**
    * Transform file at given path
    * @param relativePath Relative path
    * @param fn Transform handler
@@ -222,13 +235,7 @@ export class Majo extends MajoContext {
    * @param fn Filter handler
    */
   filter(fn: FilterHandler) {
-    return this.mutate(context => {
-      for (const relativePath in context.files) {
-        if (!fn(relativePath, context.files[relativePath])) {
-          delete context.files[relativePath]
-        }
-      }
-    })
+    return this.mutate(context => context.filter(fn))
   }
 
   /**
