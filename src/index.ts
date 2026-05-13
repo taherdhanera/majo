@@ -330,6 +330,7 @@ export class Majo extends MajoContext {
 
     await new Wares().use(this.middlewares).run(context)
 
+    this.meta = context.meta
     this.files = context.files
     this.processed = true
 

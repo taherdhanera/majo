@@ -95,6 +95,25 @@ test('middleware context can filter files', async () => {
   expect(stream.fileList).not.toContain('should-filter.js')
 })
 
+test('queued file operations see reassigned middleware meta', async () => {
+  const stream = majo()
+
+  stream
+    .source('**', { baseDir: path.join(__dirname, 'fixture/source') })
+    .use(ctx => {
+      ctx.meta = { test: false }
+    })
+    .filter(filepath => {
+      return filepath !== 'should-filter.js' || stream.meta.test
+    })
+
+  await stream.process()
+
+  expect(stream.meta).toEqual({ test: false })
+  expect(stream.fileList).toContain('tmp.js')
+  expect(stream.fileList).not.toContain('should-filter.js')
+})
+
 test('stats', async () => {
   const stream = majo()
 
